@@ -60,13 +60,19 @@ def on_submit():
     messagebox.showinfo("限号情况", result)
 
 def load_local_data():
-    if os.path.exists("data.json"):
-        with open("data.json", "r") as f:
+    if os.path.exists("./data.json"):
+        with open("./data.json", "r", encoding='utf-8') as f:
+            global data  # 使用全局变量 data
             data = json.load(f)
     else:
         messagebox.showerror("错误", "本地数据文件不存在")
         return -1
+    
+    # 更新下拉框的城市选项
+    city_entry['values'] = list(data.keys())
+    
     messagebox.showinfo("提示", "已从本地读取数据")
+    update_status("已从本地读取数据")
     return data
 
 def sync_from_network():
@@ -86,7 +92,7 @@ root = tk.Tk()
 root.title("车牌限号查询")
 
 # 设置窗口大小
-root.geometry("300x150")
+root.geometry("300x160")
 root.resizable(False, False)
 
 # 创建菜单栏
@@ -103,6 +109,14 @@ help_menu = tk.Menu(menu_bar, tearoff=0)
 help_menu.add_command(label="关于", command=about)
 help_menu.add_command(label="退出", command=exit_app)
 menu_bar.add_cascade(label="帮助", menu=help_menu)
+
+# 底部标签
+status_label = tk.Label(root, text="当前使用的是示例数据，请从同步选项进行同步", fg="blue")
+status_label.grid(row=3, column=0, columnspan=2, pady=5)
+
+# 定义一个函数来更新 Label 的内容
+def update_status(message):
+    status_label.config(text=message)
 
 # 将菜单栏添加到窗口
 root.config(menu=menu_bar)
