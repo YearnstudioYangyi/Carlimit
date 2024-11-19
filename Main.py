@@ -24,6 +24,13 @@ data = {
     # 示例数据
 }
 
+def auto_choice_city(car):
+    li = {'京A':'北京','沪A':'上海'}
+    if li.get(car[0:2]) != None:
+        return li.get(car[0:2])
+    else:
+        return -1
+
 def check_limitation(city, plate_number, data):
     # 获取当前星期几
     today = datetime.datetime.now().strftime("%A")
@@ -52,11 +59,16 @@ def check_limitation(city, plate_number, data):
 def on_submit():
     city = city_var.get()
     plate_number = plate_var.get()
-    
+    if disable_checkbox_var.get():
+        temp = auto_choice_city(plate_number)
+        if temp == -1:
+            messagebox.showwarning("警告", "无法自动匹配，请手动选择")
+            return
+        else:
+            city = temp
     if not city or not plate_number:
-        messagebox.showwarning("警告", "请输入城市和车牌号")
+        messagebox.showwarning("警告", "城市或车牌号为空")
         return
-    
     result = check_limitation(city, plate_number, data)
     messagebox.showinfo("限号情况", result)
 
@@ -105,6 +117,12 @@ def about():
     # 关于信息
     messagebox.showinfo("关于", "这是一个车牌限号查询工具\n由yangyi制作")
 
+def toggle_city_entry(var):
+    if var.get():
+        city_entry.config(state=tk.DISABLED)
+    else:
+        city_entry.config(state=tk.NORMAL)
+
 def exit_app():
     # 退出应用
     root.quit()
@@ -114,7 +132,7 @@ root = tk.Tk()
 root.title("车牌限号查询")
 
 # 设置窗口大小
-root.geometry("300x160")
+root.geometry("300x200")
 root.resizable(False, False)
 root.wm_iconbitmap('')
 
@@ -134,8 +152,8 @@ help_menu.add_command(label="退出", command=exit_app)
 menu_bar.add_cascade(label="帮助", menu=help_menu)
 
 # 底部标签
-status_label = tk.Label(root, text="当前使用的是示例数据，请从同步选项进行同步", fg="blue")
-status_label.grid(row=3, column=0, columnspan=2, pady=5)
+# status_label = tk.Label(root, text="当前使用的是示例数据，请从同步选项进行同步")
+# status_label.grid(row=4, column=0, columnspan=2,pady=5)
 
 # 定义一个函数来更新 Label 的内容
 def update_status(message):
@@ -159,9 +177,18 @@ city_entry.grid(row=0, column=1, padx=10, pady=5)
 plate_entry = tk.Entry(root, textvariable=plate_var)
 plate_entry.grid(row=1, column=1, padx=10, pady=5)
 
+# 创建自动匹配选项
+disable_checkbox_var = tk.BooleanVar()
+disable_checkbox = tk.Checkbutton(root, text="自动匹配", variable=disable_checkbox_var, command=lambda: toggle_city_entry(disable_checkbox_var))
+disable_checkbox.grid(row=2, column=0, columnspan=2, pady=5)  # 将行参数设置为2
+
 # 创建提交按钮
 submit_button = tk.Button(root, text="查询", command=on_submit)
-submit_button.grid(row=2, column=0, columnspan=2, pady=10)
+submit_button.grid(row=3, column=0, columnspan=2, pady=10)  # 将行参数设置为3
+
+# 底部标签
+status_label = tk.Label(root, text="当前使用的是示例数据，请从同步选项进行同步", fg="blue")
+status_label.grid(row=4, column=0, columnspan=2, pady=5) 
 
 # 运行主循环
 root.mainloop()
