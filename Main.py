@@ -3,6 +3,7 @@ import datetime
 import os
 import tkinter as tk
 from tkinter import ttk, messagebox
+import requests
 
 # 作者：2027级高一二十班阳毅
 data = {
@@ -76,8 +77,29 @@ def load_local_data():
     return data
 
 def sync_from_network():
-    # 从网络同步数据的逻辑
-    messagebox.showinfo("提示", "正在开发")
+    try:
+        # 发送网络请求
+        response = requests.get("https://db.yearnstudio.cn/api/data")
+        
+        # 检查请求是否成功
+        if response.status_code == 200:
+            # 解析 JSON 数据
+            new_data = response.json()
+            
+            # 更新全局变量 data
+            global data
+            data = new_data
+            
+            # 更新下拉框的城市选项
+            city_entry['values'] = list(data.keys())
+            
+            # 更新状态标签
+            update_status("已从网络同步数据")
+            messagebox.showinfo("提示", "已从网络同步数据")
+        else:
+            messagebox.showerror("错误", f"网络请求失败")
+    except Exception as e:
+        messagebox.showerror("错误", f"网络请求发生错误: {str(e)}")
 
 def about():
     # 关于信息
@@ -94,6 +116,7 @@ root.title("车牌限号查询")
 # 设置窗口大小
 root.geometry("300x160")
 root.resizable(False, False)
+root.wm_iconbitmap('')
 
 # 创建菜单栏
 menu_bar = tk.Menu(root)
