@@ -132,9 +132,23 @@ root = tk.Tk()
 root.title("车牌限号查询")
 
 # 设置窗口大小
-root.geometry("300x200")
+window_width = 300
+window_height = 200
+screen_width = root.winfo_screenwidth()
+screen_height = root.winfo_screenheight()
+
+# 计算窗口在屏幕上的中心位置
+x_position = (screen_width - window_width) // 2
+y_position = (screen_height - window_height) // 2
+
+# 设置窗口的位置和大小
+root.geometry(f"{window_width}x{window_height}+{x_position}+{y_position}")
+
+# 禁用窗口大小调整
 root.resizable(False, False)
 root.wm_iconbitmap('')
+
+# 其他代码保持不变
 
 # 创建菜单栏
 menu_bar = tk.Menu(root)
