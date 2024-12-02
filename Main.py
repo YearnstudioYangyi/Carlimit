@@ -156,7 +156,7 @@ menu_bar = tk.Menu(root)
 # 创建文件菜单
 file_menu = tk.Menu(menu_bar, tearoff=0)
 file_menu.add_command(label="本地读取", command=load_local_data)
-file_menu.add_command(label="从网络同步", command=sync_from_network)
+# file_menu.add_command(label="从网络同步", command=sync_from_network)
 menu_bar.add_cascade(label="同步", menu=file_menu)
 
 # 创建帮助菜单
